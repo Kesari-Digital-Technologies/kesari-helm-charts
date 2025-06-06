@@ -1,0 +1,320 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shkeeper-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/instance: shkeeper-vsys
+    app.kubernetes.io/name: shkeeper
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: shkeeper-vsys
+      app.kubernetes.io/name: shkeeper
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: shkeeper-vsys
+        app.kubernetes.io/name: shkeeper
+    spec:
+
+      {{- with .Values.dev.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      hostname: shkeeper
+      containers:
+      - name: shkeeper
+        image: {{ .Values.shkeeper.image }}
+        ports:
+        - containerPort: 5000
+        env:
+          - name: TRON_API_SERVER_HOST
+            value: {{ .Values.tron_shkeeper.host }}
+          - name: TRON_API_SERVER_PORT
+            value: {{ .Values.tron_shkeeper.port | quote }}
+          - name: BTC_WALLET
+            value: {{ if .Values.btc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: LTC_WALLET
+            value: {{ if .Values.ltc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: DOGE_WALLET
+            value: {{ if .Values.doge.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: TRX_WALLET
+            value: {{ if .Values.trx.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: USDT_WALLET
+            value: {{ if .Values.usdt.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: USDC_WALLET
+            value: {{ if .Values.usdc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: ETH_WALLET
+            value: {{ if .Values.eth.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: ETH_USDT_WALLET
+            value: {{ if .Values.eth_usdt.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: ETH_USDC_WALLET
+            value: {{ if .Values.eth_usdc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: ETH_PYUSD_WALLET
+            value: {{ if .Values.eth_pyusd.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: MONERO_WALLET
+            value: {{ if .Values.monero.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: BNB_WALLET
+            value: {{ if .Values.bnb.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: BNB_USDT_WALLET
+            value: {{ if .Values.bnb_usdt.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: BNB_USDC_WALLET
+            value: {{ if .Values.bnb_usdc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: XRP_WALLET
+            value: {{ if .Values.xrp.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: MATIC_WALLET
+            value: {{ if .Values.matic.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: POLYGON_USDT_WALLET
+            value: {{ if .Values.polygon_usdt.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: POLYGON_USDC_WALLET
+            value: {{ if .Values.polygon_usdc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: AVAX_WALLET
+            value: {{ if .Values.avax.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: AVALANCHE_USDT_WALLET
+            value: {{ if .Values.avalanche_usdt.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: AVALANCHE_USDC_WALLET
+            value: {{ if .Values.avalanche_usdc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: SOL_WALLET
+            value: {{ if .Values.sol.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: SOLANA_USDT_WALLET
+            value: {{ if .Values.solana_usdt.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: SOLANA_USDC_WALLET
+            value: {{ if .Values.solana_usdc.enabled }}enabled{{ else }}disabled{{ end }}
+          - name: SOLANA_PYUSD_WALLET
+            value: {{ if .Values.solana_pyusd.enabled }}enabled{{ else }}disabled{{ end }}
+          {{- if .Values.btc.enabled }}
+          - name: BTC_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: bitcoin-rpc
+                key: username
+                optional: false
+          - name: BTC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bitcoin-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.ltc.enabled }}
+          - name: LTC_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: litecoin-rpc
+                key: username
+                optional: false
+          - name: LTC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: litecoin-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.doge.enabled }}
+          - name: DOGE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: dogecoin-rpc
+                key: username
+                optional: false
+          - name: DOGE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: dogecoin-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.trx.enabled }}
+          - name: TRX_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: usdt-rpc
+                key: username
+                optional: false
+          - name: TRX_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: usdt-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.usdt.enabled }}
+          - name: USDT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: usdt-rpc
+                key: username
+                optional: false
+          - name: USDT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: usdt-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.usdc.enabled }}
+          - name: USDC_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: usdt-rpc
+                key: username
+                optional: false
+          - name: USDC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: usdt-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if or .Values.eth.enabled .Values.eth_usdt.enabled .Values.eth_usdc.enabled .Values.eth_pyusd.enabled}}
+          - name: ETH_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: eth-rpc
+                key: username
+                optional: false
+          - name: ETH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: eth-rpc
+                key: password
+                optional: false
+          {{- end }}
+           {{- if or .Values.bnb.enabled .Values.bnb_usdt.enabled .Values.bnb_usdc.enabled}}
+          - name: BNB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: bnb-rpc
+                key: username
+                optional: false
+          - name: BNB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bnb-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.xrp.enabled}}
+          - name: XRP_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: xrp-rpc
+                key: username
+                optional: false
+          - name: XRP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: xrp-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if or .Values.matic.enabled .Values.polygon_usdt.enabled .Values.polygon_usdc.enabled}}
+          - name: POLYGON_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: polygon-rpc
+                key: username
+                optional: false
+          - name: POLYGON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: polygon-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if or .Values.avax.enabled .Values.avalanche_usdt.enabled .Values.avalanche_usdc.enabled}}
+          - name: AVALANCHE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: avalanche-rpc
+                key: username
+                optional: false
+          - name: AVALANCHE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: avalanche-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if or .Values.sol.enabled .Values.solana_usdt.enabled .Values.solana_usdc.enabled .Values.solana_pyusd.enabled}}
+          - name: SOLANA_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: sol-rpc
+                key: username
+                optional: false
+          - name: SOLANA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sol-rpc
+                key: password
+                optional: false
+          {{- end }}
+          {{- if .Values.monero.enabled }}
+          - name: MONERO_WALLET_RPC_USER
+            valueFrom:
+              secretKeyRef:
+                name: monero-wallet-rpc
+                key: username
+                optional: false
+          - name: MONERO_WALLET_RPC_PASS
+            valueFrom:
+              secretKeyRef:
+                name: monero-wallet-rpc
+                key: password
+                optional: false
+          - name: MONERO_DAEMON_HOST
+            value: {{ .Values.monero.fullnode.monerod.host }}
+          - name: MONERO_DAEMON_PORT
+            value: {{ .Values.monero.fullnode.monerod.port | quote }}
+          - name: MONERO_DAEMON_USER
+            value: {{ .Values.monero.fullnode.monerod.user }}
+          - name: MONERO_DAEMON_PASS
+            value: {{ .Values.monero.fullnode.monerod.password }}
+          {{- end }}
+          {{- if .Values.btc_lightning.enabled }}
+          - name: LND_NETWORK
+            value: {{ .Values.btc_lightning.network }}
+          - name: LND_REST_URL
+            value: {{ .Values.btc_lightning.lnd.rest_url }}
+          - name: RTL_WEB_URL
+            value: {{ .Values.btc_lightning.rtl.web_url }}
+          - name: BITCOINLIGHTNING_WALLET
+            value: enabled
+          {{- else }}
+          - name: BITCOINLIGHTNING_WALLET
+            value: disabled
+          {{- end }}
+          - name: SHKEEPER_BTC_BACKEND_KEY
+            valueFrom:
+              secretKeyRef:
+                name: shkeeper-btc-key
+                key: password
+                optional: false
+          - name: TRON_MULTISERVER_GUI
+            value: {{ .Values.shkeeper.tron_multiserver_gui | default "" | quote }}
+          {{- range $name, $value := .Values.shkeeper.extraEnv }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+        volumeMounts:
+        - name: shkeeper-db-storage
+          mountPath: /shkeeper.io/instance
+        {{- if .Values.btc_lightning.enabled }}
+        - name: lightning-lnd
+          mountPath: /lightning_shared
+        {{- end }}
+      volumes:
+      - name: shkeeper-db-storage
+        persistentVolumeClaim:
+          claimName: shkeeper-db-claim
+      {{- if .Values.btc_lightning.enabled }}
+      - name: lightning-lnd
+        persistentVolumeClaim:
+          claimName: lightning-lnd
+      {{- end }}

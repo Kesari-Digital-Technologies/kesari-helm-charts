@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tron-shkeeper-data
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tron-shkeeper-redis-data
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

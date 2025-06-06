@@ -1,0 +1,41 @@
+{{- if .Values.xrp_fullnode.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xrp
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: xrp
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xrp
+  template:
+    metadata:
+      labels:
+        app: xrp
+    spec:
+      terminationGracePeriodSeconds: 300
+      tolerations: {{- toYaml .Values.xrp_fullnode.tolerations | nindent 8 }}
+      nodeSelector: {{- toYaml .Values.xrp_fullnode.nodeSelector | nindent 8 }}
+      containers:
+
+      # executor
+      - name: xrp
+        image: xrpllabsofficial/xrpld:2.4.0
+        volumeMounts:
+        - name: xrp-fullnode-config
+          mountPath: /config/rippled.cfg
+          subPath: rippled.cfg
+        - name: xrp-fullnode-config
+          mountPath: /config/validators.txt
+          subPath: validators.txt
+
+      volumes:
+      - name: xrp-fullnode-config
+        configMap:
+          name: xrp-fullnode-config
+{{- end }}

@@ -1,0 +1,203 @@
+#
+# General
+#
+
+namespace: kesaricryptogateway
+external_ip: 0.0.0.0
+
+dev:
+  imagePullSecrets:
+
+storageClassName:
+
+#
+# kesaricryptogateway
+#
+
+kesaricryptogateway:
+  image: kesaricryptogateway/kesaricryptogateway:2.3.1
+  port: 5000
+
+#
+# BTC and forks
+#
+
+btc:
+  enabled: true
+  mainnet: true
+  bitcoind:
+    image: kesaricryptogateway/bitcoind:27.0
+
+ltc:
+  enabled: true
+  mainnet: true
+doge:
+  enabled: true
+  mainnet: true
+
+#
+# Tron
+#
+
+tron_fullnode:
+  image: kesaricryptogateway/javatron:GreatVoyage-v4.7.7
+  enabled: false
+  url: http://java-tron:8090
+  solidity_url: http://java-tron:8091
+  mainnet: true
+  JAVA_TOOL_OPTIONS: ""
+  nodeSelector: {}
+  tolerations: []
+
+tron_kesaricryptogateway:
+  image: kesaricryptogateway/tron-kesaricryptogateway:1.1.7
+  host: 'tron-kesaricryptogateway'
+  port: 6000
+
+trx:
+  enabled: false
+usdt:
+  enabled: false
+usdc:
+  enabled: false
+
+#
+# Ethereum
+#
+
+eth_fullnode:
+  enabled: false
+  url: http://ethereum:8545
+  mainnet: true
+  nodeSelector: {}
+  tolerations: []
+
+ethereum_kesaricryptogateway:
+  image: kesaricryptogateway/ethereum-kesaricryptogateway:1.1.7
+
+eth:
+  enabled: false
+eth_usdt:
+  enabled: false
+eth_usdc:
+  enabled: false
+eth_pyusd:
+  enabled: false
+
+#
+# Monero
+#
+
+monero:
+
+  enabled: false
+  image: kesaricryptogateway/monero:v0.18.1.2
+  mainnet: true
+
+  fullnode:
+    enabled: false
+    monerod:
+      host: "monerod"
+      port: "1111"
+      user: "monerod"
+      password: "monerod"
+      nodeSelector: {}
+      tolerations: []
+
+#
+# BNB
+#
+
+bnb_fullnode:
+  enabled: false
+  url: http://bnb:8545
+  mainnet: true
+  nodeSelector: {}
+  tolerations: []
+
+bnb_kesaricryptogateway:
+  image: kesaricryptogateway/bnb-kesaricryptogateway:1.1.5
+
+bnb:
+  enabled: false
+bnb_usdt:
+  enabled: false
+bnb_usdc:
+  enabled: false
+
+#
+# XRP
+#
+
+xrp_fullnode:
+  enabled: false
+  url: http://xrp:51234
+  mainnet: true
+  nodeSelector: {}
+  tolerations: []
+
+xrp_kesaricryptogateway:
+  image: kesaricryptogateway/xrp-kesaricryptogateway:1.0.12
+
+xrp:
+  enabled: false
+
+#
+# Polygon
+#
+
+polygon_fullnode:
+  enabled: false
+  url: http://polygon:51234
+  mainnet: true
+  nodeSelector: {}
+  tolerations: []
+
+polygon_kesaricryptogateway:
+  image: kesaricryptogateway/polygon-kesaricryptogateway:1.0.3
+
+matic:
+  enabled: false
+polygon_usdt:
+  enabled: false
+polygon_usdc:
+  enabled: false
+
+#
+# Avalanche
+#
+
+avalanche_fullnode:
+  enabled: false
+  url: http://avalanche:9650/ext/bc/C/rpc
+  mainnet: true
+  nodeSelector: {}
+  tolerations: []
+
+avalanche_kesaricryptogateway:
+  image: kesaricryptogateway/avalanche-kesaricryptogateway:1.0.0
+
+avax:
+  enabled: false
+avalanche_usdt:
+  enabled: false
+avalanche_usdc:
+  enabled: false
+
+#
+# BTC Lightning
+#
+
+btc_lightning:
+  enabled: false
+  network: mainnet
+
+  lnd:
+    image: kesaricryptogateway/lndinit:v0.1.22-beta-lnd-v0.18.3-beta
+    rest_url: https://lightning-lnd-rest:8080
+    p2p_port: 9735
+
+  rtl:
+    image: shahanafarooqui/rtl:v0.15.4
+    web_url: http://rtl:3000
+    logout_redirect_link: http://kesaricryptogateway:5000/wallet/BTC-LIGHTNING
